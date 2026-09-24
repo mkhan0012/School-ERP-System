@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  COUNSELLOR
+}
+
+enum LeadSource {
+  WEBSITE
+  WHATSAPP
+  PHONE
+  WALK_IN
+  FAIR
+  CAMPAIGN
+  OTHER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  INTERESTED
+  APPLICATION
+  ADMITTED
+  NOT_INTERESTED
+  LOST
+  DUPLICATE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum FollowUpType {
+  CALL
+  WHATSAPP
+  EMAIL
+  MEETING
+  OTHER
+}
+
+enum FollowUpOutcome {
+  INTERESTED
+  CALL_LATER
+  NO_RESPONSE
+  NOT_INTERESTED
+  APPLICATION_STARTED
+  OTHER
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          Role      @default(COUNSELLOR)
+  active        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  assignedLeads Lead[]    @relation("AssignedCounsellor")
+  followUps     FollowUp[]
+  activities    Activity[]
+}
+
+model Course {
+  id         String   @id @default(cuid())
+  name       String
+  department String?
+  duration   String?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  leads      Lead[]
+}
+
+model Lead {
+  id           String     @id @default(cuid())
+  name         String
+  phone        String
+  email        String?
+  city         String?
+  source       LeadSource
+  status       LeadStatus @default(NEW)
+  priority     Priority   @default(MEDIUM)
+  
+  courseId     String
+  course       Course     @relation(fields: [courseId], references: [id])
+  
+  counsellorId String?
+  counsellor   User?      @relation("AssignedCounsellor", fields: [counsellorId], references: [id])
+  
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  followUps    FollowUp[]
+  activities   Activity[]
+
+  @@index([phone])
+  @@index([email])
+  @@index([status])
+  @@index([source])
+  @@index([priority])
+  @@index([counsellorId])
+  @@index([courseId])
+  @@index([createdAt])
+}
+
+model FollowUp {
+  id           String           @id @default(cuid())
+  leadId       String
+  lead         Lead             @relation(fields: [leadId], references: [id])
+  counsellorId String
+  counsellor   User             @relation(fields: [counsellorId], references: [id])
+  scheduledAt  DateTime
+  type         FollowUpType
+  outcome      FollowUpOutcome?
+  notes        String?
+  completed    Boolean          @default(false)
+  completedAt  DateTime?
+  createdAt    DateTime         @default(now())
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  action      String
+  description String
+  metadata    String?
+  createdAt   DateTime @default(now())
+}
