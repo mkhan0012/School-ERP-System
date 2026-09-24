@@ -19,9 +19,12 @@ export default async function LeadDetails({ params }: { params: { id: string } }
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{lead.name}</h1>
-          <div className="flex gap-2 mt-2">
-            <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">{lead.status}</span>
-            <span className={`px-2 py-1 rounded-md text-xs font-medium ${lead.priority === 'HIGH' ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-700'}`}>{lead.priority}</span>
+          <div className="flex gap-2 mt-2 items-center">
+            <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-[10px] font-bold uppercase tracking-wider">{lead.status}</span>
+            <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${lead.priority === 'HIGH' ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-700'}`}>{lead.priority}</span>
+            <span className="px-2 py-1 bg-slate-100 text-slate-700 rounded-md text-[10px] font-bold uppercase tracking-wider">
+              AGE: {Math.floor((Date.now() - lead.createdAt.getTime()) / (1000 * 60 * 60 * 24))} DAYS
+            </span>
           </div>
         </div>
         <div className="flex gap-2">

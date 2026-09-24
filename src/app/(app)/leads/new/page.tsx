@@ -23,10 +23,32 @@ export default function NewLeadPage() {
     })
   }, [])
 
+  const [duplicateWarning, setDuplicateWarning] = useState<any>(null)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData.entries())
+    
+    // Add user id for activity
+    data.userId = userId;
+
+    const res = await createLead(data)
+    if (res.error === 'DUPLICATE_PHONE') {
+       setDuplicateWarning(res.lead)
+    } else if (res.error) {
+       alert("Error: " + res.error)
+    } else {
+       router.push(`/leads/${res.lead.id}`)
+    }
+  }
+
+  const handleForceCreate = async () => {
+    const form = document.querySelector('form') as HTMLFormElement
+    const formData = new FormData(form)
+    const data = Object.fromEntries(formData.entries())
+    data.userId = userId;
+    data.force = 'true';
     
     const res = await createLead(data)
     if (res.error) {
@@ -41,7 +63,30 @@ export default function NewLeadPage() {
       <h1 className="text-3xl font-bold text-gray-900">Create New Lead</h1>
       <Card>
         <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {duplicateWarning && (
+            <div className="mb-6 p-4 border border-orange-200 bg-orange-50 rounded-xl">
+              <h3 className="text-lg font-bold text-orange-800 mb-2">⚠️ Possible Duplicate Lead Found</h3>
+              <p className="text-orange-900 text-sm mb-4">A lead with this phone number already exists in the system.</p>
+              <div className="bg-white p-3 rounded-lg border border-orange-100 text-sm mb-4 space-y-1">
+                <div><strong>Name:</strong> {duplicateWarning.name}</div>
+                <div><strong>Status:</strong> {duplicateWarning.status}</div>
+                <div><strong>Created:</strong> {new Date(duplicateWarning.createdAt).toLocaleDateString()}</div>
+              </div>
+              <div className="flex gap-3">
+                <Button type="button" onClick={() => router.push(`/leads/${duplicateWarning.id}`)} variant="outline" className="border-orange-300 text-orange-800 hover:bg-orange-100">
+                  Open Existing Lead
+                </Button>
+                <Button type="button" onClick={handleForceCreate} className="bg-orange-600 hover:bg-orange-700 text-white">
+                  Create Anyway
+                </Button>
+                <Button type="button" onClick={() => setDuplicateWarning(null)} variant="ghost" className="text-slate-500">
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} className={`space-y-6 ${duplicateWarning ? 'opacity-50 pointer-events-none' : ''}`}>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name *</Label>
