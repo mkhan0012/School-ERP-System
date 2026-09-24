@@ -3,12 +3,12 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { auth } from "@/auth"
 
-export default async function LeadsPage({ searchParams }: { searchParams: { q?: string, filter?: string } }) {
+export default async function LeadsPage({ searchParams }: { searchParams: Promise<any> }) {
   const session = await auth();
   const isCounsellor = session?.user?.role === 'COUNSELLOR';
   
-  const q = searchParams.q || "";
-  const filter = searchParams.filter || "";
+  const q = (await searchParams).q || "";
+  const filter = (await searchParams).filter || "";
 
   // Base where clause
   let where: any = isCounsellor ? { counsellorId: session?.user?.id } : {};

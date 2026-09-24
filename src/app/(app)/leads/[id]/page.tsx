@@ -2,13 +2,14 @@ import prisma from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 import { auth } from "@/auth"
 
-export default async function LeadDetails({ params }: { params: { id: string } }) {
+export default async function LeadDetails({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const lead = await prisma.lead.findUnique({
-    where: { id: params.id },
+    where: { id: (await params).id },
     include: { course: true, counsellor: true, activities: { orderBy: { createdAt: 'desc' }, include: { user: true } } }
   })
 
@@ -28,10 +29,16 @@ export default async function LeadDetails({ params }: { params: { id: string } }
           </div>
         </div>
         <div className="flex gap-2">
-           <Button variant="outline">Schedule Follow-up</Button>
-           <Button variant="outline">Change Status</Button>
+           <Link href={`/leads/${lead.id}/follow-up`}>
+             <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">Schedule Follow-up</Button>
+           </Link>
+           <Link href={`/leads/${lead.id}/status`}>
+             <Button variant="outline">Change Status</Button>
+           </Link>
            {session?.user?.role !== 'COUNSELLOR' && (
-             <Button variant="outline">Reassign</Button>
+             <Link href={`/leads/${lead.id}/reassign`}>
+               <Button variant="outline" className="text-orange-600 border-orange-200 hover:bg-orange-50">Reassign</Button>
+             </Link>
            )}
         </div>
       </div>

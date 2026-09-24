@@ -2,11 +2,12 @@ import prisma from "@/lib/prisma"
 import { auth } from "@/auth"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { completeFollowUp } from "@/actions/admin"
 
-export default async function FollowUpsPage({ searchParams }: { searchParams: { filter?: string } }) {
+export default async function FollowUpsPage({ searchParams }: { searchParams: Promise<any> }) {
   const session = await auth();
   const isCounsellor = session?.user?.role === 'COUNSELLOR';
-  const filter = searchParams.filter || 'today';
+  const filter = (await searchParams).filter || 'today';
 
   const now = new Date();
   const startOfToday = new Date(now.setHours(0,0,0,0));
@@ -84,7 +85,12 @@ export default async function FollowUpsPage({ searchParams }: { searchParams: { 
                 </td>
                 <td className="px-4 py-4 text-right">
                   {!f.completed ? (
-                    <Button size="sm" variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">Complete</Button>
+                    <form action={completeFollowUp}>
+                      <input type="hidden" name="id" value={f.id} />
+                      <input type="hidden" name="leadId" value={f.leadId} />
+                      <input type="hidden" name="userId" value={session?.user?.id || ''} />
+                      <Button type="submit" size="sm" variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">Complete</Button>
+                    </form>
                   ) : (
                     <span className="text-slate-400 italic text-xs">{f.outcome || 'No outcome'}</span>
                   )}
