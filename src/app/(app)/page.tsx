@@ -31,7 +31,7 @@ export default async function Dashboard() {
     prisma.lead.count({ where: { ...leadWhere, status: 'NEW' } }),
     prisma.lead.count({ where: { ...leadWhere, priority: 'HIGH' } }),
     // Funnel cumulative logical stats
-    prisma.lead.count({ where: { ...leadWhere, status: { in: ['CONTACTED', 'INTERESTED', 'APPLICATION', 'ADMITTED'] } } }),
+    prisma.lead.count({ where: { ...leadWhere, status: { in: ['CONTACTED', 'INTERESTED', 'APPLICATION', 'ADMITTED', 'NOT_INTERESTED', 'LOST'] } } }),
     prisma.lead.count({ where: { ...leadWhere, status: { in: ['INTERESTED', 'APPLICATION', 'ADMITTED'] } } }),
     prisma.lead.count({ where: { ...leadWhere, status: { in: ['APPLICATION', 'ADMITTED'] } } }),
     prisma.lead.count({ where: { ...leadWhere, status: 'ADMITTED' } }),

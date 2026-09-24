@@ -23,7 +23,7 @@ export default async function ReportsPage() {
 
   // 3. Conversion Funnel (Cumulative)
   const totalLeads = await prisma.lead.count();
-  const contacted = await prisma.lead.count({ where: { status: { in: ['CONTACTED', 'INTERESTED', 'APPLICATION', 'ADMITTED'] } } })
+  const contacted = await prisma.lead.count({ where: { status: { in: ['CONTACTED', 'INTERESTED', 'APPLICATION', 'ADMITTED', 'NOT_INTERESTED', 'LOST'] } } })
   const interested = await prisma.lead.count({ where: { status: { in: ['INTERESTED', 'APPLICATION', 'ADMITTED'] } } })
   const applications = await prisma.lead.count({ where: { status: { in: ['APPLICATION', 'ADMITTED'] } } })
   const admissions = await prisma.lead.count({ where: { status: 'ADMITTED' } })

@@ -21,6 +21,16 @@ export default function NewCoursePage() {
               <Input id="name" name="name" required placeholder="e.g. B.Tech Computer Science" />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="department">Department</Label>
+              <Input id="department" name="department" placeholder="e.g. Engineering & Tech" />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="duration">Duration</Label>
+              <Input id="duration" name="duration" placeholder="e.g. 4 Years" />
+            </div>
+
             <div className="flex gap-4 pt-4">
               <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">Save Course</Button>
               <Link href="/courses">

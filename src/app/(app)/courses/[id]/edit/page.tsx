@@ -28,6 +28,16 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
               <Input id="name" name="name" required defaultValue={course.name} />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="department">Department</Label>
+              <Input id="department" name="department" defaultValue={course.department || ''} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="duration">Duration</Label>
+              <Input id="duration" name="duration" placeholder="e.g. 3 Years" defaultValue={course.duration || ''} />
+            </div>
+
             <div className="flex gap-4 pt-4">
               <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">Save Changes</Button>
               <Link href="/courses">

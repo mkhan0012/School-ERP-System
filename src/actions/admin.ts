@@ -19,15 +19,17 @@ export async function toggleCourseStatus(formData: FormData) {
 export async function saveCourse(formData: FormData) {
   const id = formData.get('id') as string;
   const name = formData.get('name') as string;
+  const department = formData.get('department') as string;
+  const duration = formData.get('duration') as string;
   
   if (id) {
     await prisma.course.update({
       where: { id },
-      data: { name }
+      data: { name, department, duration }
     });
   } else {
     await prisma.course.create({
-      data: { name, active: true }
+      data: { name, department, duration, active: true }
     });
   }
   revalidatePath('/courses');

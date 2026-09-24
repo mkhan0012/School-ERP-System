@@ -52,8 +52,8 @@ export default async function CoursesPage() {
                     <div className="font-bold text-slate-900">{c.name}</div>
                     {!c.active && <span className="text-[10px] bg-red-100 text-red-700 px-1 py-0.5 rounded mt-1 inline-block font-bold">INACTIVE</span>}
                   </td>
-                  <td className="px-4 py-4 text-slate-700">Engineering & Tech</td>
-                  <td className="px-4 py-4 text-center text-slate-700">4 Years</td>
+                  <td className="px-4 py-4 text-slate-700">{c.department || '-'}</td>
+                  <td className="px-4 py-4 text-center text-slate-700">{c.duration || 'N/A'}</td>
                   <td className="px-4 py-4 text-center font-medium text-slate-700">{total}</td>
                   <td className="px-4 py-4 text-center text-indigo-600 font-medium">{apps}</td>
                   <td className="px-4 py-4 text-center text-emerald-600 font-bold">{admits}</td>
